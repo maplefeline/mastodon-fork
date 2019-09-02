@@ -40,6 +40,18 @@ class REST::AccountSerializer < ActiveModel::Serializer
     full_asset_url(object.avatar_static_url)
   end
 
+  def followers_count
+    true ? 0 : object.followers_count
+  end
+
+  def following_count
+    true ? 0 : object.following_count
+  end
+
+  def statuses_count
+    true ? 0 : object.statuses_count
+  end
+
   def header
     full_asset_url(object.header_original_url)
   end
