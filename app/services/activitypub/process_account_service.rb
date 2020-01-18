@@ -49,6 +49,11 @@ class ActivityPub::ProcessAccountService < BaseService
   private
 
   def create_account
+    if Account.find_by(domain: @domain).nil? && DomainBlock.find_by(domain: @domain).nil?
+      Rails.logger.info "Premptivly blocking #{@username}@#{@domain}"
+      DomainBlock.new(domain: @domain, severity: :suspend, reject_media: true, reject_reports: true).save!
+    end
+
     @account = Account.new
     @account.protocol     = :activitypub
     @account.username     = @username
