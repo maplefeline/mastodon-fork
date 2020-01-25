@@ -499,12 +499,15 @@ class Account < ApplicationRecord
       Rails.logger.info "Premptivly blocking #{username}@#{domain}"
       admin = Account.joins(:user).merge(User.staff).first
       ReportWorker.perform_async(
-        admin,
-        self,
+        admin.id,
+        username,
+        domain,
         comment: 'Quarantined new domain',
         forward: false,
       )
-      DomainBlock.new(domain: domain, severity: :suspend, reject_media: true, reject_reports: true).save!
+      domain_block = DomainBlock.new(domain: domain, severity: :suspend, reject_media: true, reject_reports: true)
+      domain_block.save!
+      suspended_at = domain_block.created_at
     end
   end
 
