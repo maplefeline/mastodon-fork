@@ -45,6 +45,6 @@ class DomainBlock < ApplicationRecord
   private
 
   def process_domain_block
-    DomainBlockWorker.delay_for(2.minutes).perform_async(id)
+    DomainBlockWorker.perform_in(2.minutes, id)
   end
 end

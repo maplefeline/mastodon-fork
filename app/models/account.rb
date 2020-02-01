@@ -498,7 +498,8 @@ class Account < ApplicationRecord
     if Account.find_by(domain: domain).nil? && DomainBlock.find_by(domain: domain).nil?
       Rails.logger.info "Premptivly blocking #{username}@#{domain}"
       admin = Account.joins(:user).merge(User.staff).first
-      ReportWorker.delay_for(2.minutes).perform_async(
+      ReportWorker.perform_in(
+        2.minutes,
         admin.id,
         username,
         domain,
