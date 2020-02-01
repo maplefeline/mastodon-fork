@@ -40,7 +40,6 @@ class Admin::ActionLog < ApplicationRecord
         email: [target.email, nil],
         unconfirmed_email: [nil, target.unconfirmed_email]
       )
-    when :quarantine
     end
   end
 end

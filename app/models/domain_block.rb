@@ -24,8 +24,6 @@ class DomainBlock < ApplicationRecord
 
   scope :matches_domain, ->(value) { where(arel_table[:domain].matches("%#{value}%")) }
 
-  after_save :process_domain_block
-
   def self.blocked?(domain)
     where(domain: domain, severity: :suspend).exists?
   end
@@ -42,9 +40,11 @@ class DomainBlock < ApplicationRecord
     scope.count
   end
 
+  after_save :process_domain_block
+
   private
 
   def process_domain_block
-    DomainBlockWorker.perform_async(id)
+    DomainBlockWorker.delay_for(2.minutes).perform_async(id)
   end
 end
